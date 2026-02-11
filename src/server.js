@@ -43,8 +43,10 @@ function requireAuth(req, res, next) {
   button:hover{opacity:.85}
 </style></head>
 <body><div class="login"><h1>DELTA HEDGE SIM</h1>
-<form method="POST" action="/login"><input type="password" name="password" placeholder="Password" autofocus>
-<button type="submit">Enter</button></form></div></body></html>`);
+<form id="lf" method="POST" action="/login"><input type="password" name="password" id="pw" placeholder="Password" autofocus>
+<button type="submit">Enter</button></form></div>
+<script>document.getElementById('lf').onsubmit=function(e){e.preventDefault();fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('pw').value})}).then(function(r){if(r.ok||r.redirected)window.location.href='/';else window.location.reload()}).catch(function(){window.location.reload()})}</script>
+</body></html>`);
 }
 
 // Cookie parser
