@@ -132,6 +132,7 @@ async function loadPools() {
 
     updateTokenDropdown();
     select.addEventListener("change", updateTokenDropdown);
+    document.getElementById("sim-token").addEventListener("change", toggleAmountFields);
   } catch (err) {
     console.error("Failed to load pools:", err);
   }
@@ -141,7 +142,23 @@ function updateTokenDropdown() {
   const pair = document.getElementById("sim-pair").value;
   const [a, b] = pair.split("/");
   const tokenSelect = document.getElementById("sim-token");
-  tokenSelect.innerHTML = `<option value="${a}">${a}</option><option value="${b}">${b}</option>`;
+  tokenSelect.innerHTML = `<option value="${a}">${a}</option><option value="${b}">${b}</option><option value="BOTH">Both</option>`;
+  document.getElementById("amount-a-label").textContent = a;
+  document.getElementById("amount-b-label").textContent = b;
+  toggleAmountFields();
+}
+
+function toggleAmountFields() {
+  const isBoth = document.getElementById("sim-token").value === "BOTH";
+  document.getElementById("single-amount").style.display = isBoth ? "none" : "";
+  document.getElementById("both-amounts").style.display = isBoth ? "" : "none";
+  document.getElementById("sim-price-label").style.display = isBoth ? "" : "none";
+
+  // Toggle required attributes
+  document.getElementById("sim-amount").required = !isBoth;
+  document.getElementById("sim-amount-a").required = isBoth;
+  document.getElementById("sim-amount-b").required = isBoth;
+  document.getElementById("sim-price").required = isBoth;
 }
 
 loadPools();
@@ -157,13 +174,21 @@ document.getElementById("sim-form").addEventListener("submit", async (e) => {
   resultDiv.innerHTML = '<div class="loading">Calculating hedge...</div>';
 
   try {
+    const entryToken = document.getElementById("sim-token").value;
     const body = {
       pair: document.getElementById("sim-pair").value,
       rangeLow: document.getElementById("sim-range-low").value,
       rangeHigh: document.getElementById("sim-range-high").value,
-      amount: document.getElementById("sim-amount").value,
-      entryToken: document.getElementById("sim-token").value,
+      entryToken,
     };
+
+    if (entryToken === "BOTH") {
+      body.amountA = document.getElementById("sim-amount-a").value;
+      body.amountB = document.getElementById("sim-amount-b").value;
+      body.currentPrice = document.getElementById("sim-price").value;
+    } else {
+      body.amount = document.getElementById("sim-amount").value;
+    }
 
     const res = await fetch("/api/simulate", {
       method: "POST",

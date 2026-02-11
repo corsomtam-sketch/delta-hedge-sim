@@ -75,19 +75,36 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.post("/api/simulate", (req, res) => {
   try {
-    const { pair, rangeLow, rangeHigh, amount, entryToken } = req.body;
+    const { pair, rangeLow, rangeHigh, amount, amountA, amountB, currentPrice, entryToken } = req.body;
 
-    if (!pair || !rangeLow || !rangeHigh || !amount || !entryToken) {
-      return res.status(400).json({ error: "Missing required fields: pair, rangeLow, rangeHigh, amount, entryToken" });
+    if (!pair || !rangeLow || !rangeHigh || !entryToken) {
+      return res.status(400).json({ error: "Missing required fields: pair, rangeLow, rangeHigh, entryToken" });
     }
 
-    const result = simulatePosition({
+    if (entryToken === "BOTH") {
+      if (!amountA || !amountB || !currentPrice) {
+        return res.status(400).json({ error: "Both mode requires amountA, amountB, and currentPrice" });
+      }
+    } else if (!amount) {
+      return res.status(400).json({ error: "Missing required field: amount" });
+    }
+
+    const params = {
       pair,
       rangeLow: parseFloat(rangeLow),
       rangeHigh: parseFloat(rangeHigh),
-      amount: parseFloat(amount),
       entryToken,
-    });
+    };
+
+    if (entryToken === "BOTH") {
+      params.amountA = parseFloat(amountA);
+      params.amountB = parseFloat(amountB);
+      params.currentPrice = parseFloat(currentPrice);
+    } else {
+      params.amount = parseFloat(amount);
+    }
+
+    const result = simulatePosition(params);
 
     res.json(result);
   } catch (error) {

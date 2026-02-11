@@ -34,12 +34,28 @@
         </div>
         <div class="form-row two-col">
           <label>
-            Amount
-            <input type="number" id="sim-amount" step="any" placeholder="6.5" required>
-          </label>
-          <label>
             Entry Token
             <select id="sim-token"></select>
+          </label>
+          <label id="sim-price-label" style="display:none">
+            Current Price
+            <input type="number" id="sim-price" step="any" placeholder="170.50">
+          </label>
+        </div>
+        <div id="single-amount" class="form-row">
+          <label>
+            Amount
+            <input type="number" id="sim-amount" step="any" placeholder="6.5">
+          </label>
+        </div>
+        <div id="both-amounts" class="form-row two-col" style="display:none">
+          <label>
+            <span id="amount-a-label">Token A</span> Amount
+            <input type="number" id="sim-amount-a" step="any" placeholder="6.5">
+          </label>
+          <label>
+            <span id="amount-b-label">Token B</span> Amount
+            <input type="number" id="sim-amount-b" step="any" placeholder="1000">
           </label>
         </div>
         <button type="submit" class="btn-primary">Calculate Hedge</button>

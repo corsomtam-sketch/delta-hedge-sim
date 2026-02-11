@@ -287,7 +287,7 @@ export function calculateHedge(posInfo) {
 
 // ── Simulation ──────────────────────────────────────────────────────
 
-export function simulatePosition({ pair, rangeLow, rangeHigh, amount, entryToken }) {
+export function simulatePosition({ pair, rangeLow, rangeHigh, amount, amountA: inputAmountA, amountB: inputAmountB, currentPrice: inputCurrentPrice, entryToken }) {
   // Parse pair (e.g., "SOL/USDC")
   const [symbolA, symbolB] = pair.split("/");
   const mintA = SYMBOL_TO_MINT[symbolA];
@@ -300,27 +300,27 @@ export function simulatePosition({ pair, rangeLow, rangeHigh, amount, entryToken
   const aIsStable = STABLECOINS.has(mintA);
   const bIsStable = STABLECOINS.has(mintB);
 
-  // For simulation, we use the midpoint of the provided range as a reference price
-  // But we need a "current price" — use rangeLow as entry if entryToken is tokenA (price below range = all tokenA)
-  // or rangeHigh if entryToken is tokenB (price above range = all tokenB)
   let currentPrice;
-
-  // Determine token amounts based on one-sided entry
   let amountA = 0;
   let amountB = 0;
 
-  if (entryToken === symbolA) {
+  if (entryToken === "BOTH") {
+    // Mixed entry — user provides both amounts and current price
+    amountA = inputAmountA;
+    amountB = inputAmountB;
+    currentPrice = inputCurrentPrice;
+  } else if (entryToken === symbolA) {
     // All tokenA entry — price is at or below rangeLow
     amountA = amount;
     amountB = 0;
-    currentPrice = rangeLow; // price at bottom of range (all in tokenA)
+    currentPrice = rangeLow;
   } else if (entryToken === symbolB) {
     // All tokenB entry — price is at or above rangeHigh
     amountA = 0;
     amountB = amount;
-    currentPrice = rangeHigh; // price at top of range (all in tokenB)
+    currentPrice = rangeHigh;
   } else {
-    throw new Error(`entryToken must be ${symbolA} or ${symbolB}`);
+    throw new Error(`entryToken must be ${symbolA}, ${symbolB}, or BOTH`);
   }
 
   // Calculate position USD value
