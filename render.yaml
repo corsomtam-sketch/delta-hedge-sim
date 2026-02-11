@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: delta-hedge-sim
+    runtime: node
+    buildCommand: npm install
+    startCommand: node src/server.js
+    envVars:
+      - key: APP_PASSWORD
+        sync: false

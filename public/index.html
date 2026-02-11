@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delta Hedge Simulator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>DELTA HEDGE</h1>
+      <p class="subtitle">LP position hedge simulator</p>
+    </header>
+
+    <section>
+      <h2>SIMULATE</h2>
+      <form id="sim-form">
+        <div class="form-row">
+          <label>
+            Pair
+            <select id="sim-pair"></select>
+          </label>
+        </div>
+        <div class="form-row two-col">
+          <label>
+            Range Low
+            <input type="number" id="sim-range-low" step="any" placeholder="80" required>
+          </label>
+          <label>
+            Range High
+            <input type="number" id="sim-range-high" step="any" placeholder="85" required>
+          </label>
+        </div>
+        <div class="form-row two-col">
+          <label>
+            Amount
+            <input type="number" id="sim-amount" step="any" placeholder="6.5" required>
+          </label>
+          <label>
+            Entry Token
+            <select id="sim-token"></select>
+          </label>
+        </div>
+        <button type="submit" class="btn-primary">Calculate Hedge</button>
+      </form>
+      <div id="sim-result"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
